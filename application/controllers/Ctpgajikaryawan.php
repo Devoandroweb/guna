@@ -36,7 +36,9 @@ class Ctpgajikaryawan extends CI_Controller {
         $this->db->query("$sql2 ('$XPeriode','$XPeriode_Penggajian','$XSegmen')");
         $this->db->query("$sql3 ('$XPeriode','$XPeriode_Penggajian','$XSegmen')");
         $this->db->query("$sql4 ('$XPeriode','$XPeriode_Penggajian','$XSegmen')");
-        $this->db->query("$sql5 ('$XPeriode','$XPeriode_Penggajian','$XSegmen')");
+        $data = $this->db->query("$sql5 ('$XPeriode','$XPeriode_Penggajian','$XSegmen')");
+
+        // echo var_dump($data) ;
         redirect('ctpgajikaryawan');
     }
 
