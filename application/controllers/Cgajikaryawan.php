@@ -102,7 +102,7 @@ class Cgajikaryawan extends CI_Controller {
                     $aQueryColumns[] = $col;
                 }
             }
-            //$output = ""; dimatikan aja
+            $output = "";
             $this->db->reconnect();
             foreach ($query->result_array() as $aRow) {
                 $p = $this->session->userdata('periode');
@@ -182,6 +182,7 @@ class Cgajikaryawan extends CI_Controller {
 
     function tambah(){
         $data['querys'] = $this->db->get($this->sTabless);
+         $data['pegawai'] = $this->db->get('master_karyawan')->result();
         $this->header();
         $this->load->view('gajikaryawan_add', $data);
     }

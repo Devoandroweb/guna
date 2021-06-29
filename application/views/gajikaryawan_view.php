@@ -117,9 +117,9 @@
                                   "language": {
                                     search: ""
                                   },
-                                  oLanguage: {
-                                      sLoadingRecords: '<img src="assets/ajax-loader.gif">'
-                                    },
+                                  // oLanguage: {
+                                  //     sLoadingRecords: '<img src="assets/ajax-loader.gif">'
+                                  //   },
                                 });
                                 $('#t').each(function() {
                                   var datatable = $(this);

@@ -74,7 +74,14 @@
                                     <div class="form-group">
                                         <label for="nik" class="col-sm-12 control-label">NIK</label>
                                         <div class="col-sm-12">
-                                          <input type="search" name="nik" required="required" class="autocomplete form-control col-md-12 input-smm" id="autocomplete" placeholder="NIK" />
+                                          <!-- <input type="search" name="nik" required="required" class="autocomplete form-control col-md-12 input-smm" id="autocomplete" placeholder="NIK" /> -->
+
+                                          <select class="form-control input-smm" name="nik">
+                                            <option selected="" disabled>- Pilih NIK -</option>
+                                            <?php foreach ($pegawai as $key) :?>
+                                                <option><?= $key->nik ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -114,6 +121,25 @@
                 <?php echo form_close(); ?>
             </div>
         </div>
+        <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $(document).on('change', 'select[name="nik"]', function(event) {
+            var value = $(this).val();
+            $.ajax({
+                url: '<?= base_url() ?>/Cgajikaryawan/search/'+value,
+                type: 'POST',
+                dataType: 'JSON',
+            })
+            .done(function(data) {
+                // console.log(data['suggestions'][0].nama);
+                $("input[name='nama']").val(data['suggestions'][0].nama);
+                $("input[name='enroll']").val(data['suggestions'][0].enroll);
+            })
+            
+            
+        });   
+    });
+</script>
 <?php include "footer.php" ?>
 </body>
 </html>
