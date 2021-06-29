@@ -1,0 +1,16 @@
+System Requirements
+	- PHP Version 5.6.30
+	- Apache/2.4.25 (Win32)
+	- 10.1.21-MariaDB
+	- phpMyAdmin 4.6.5.2
+	- CodeIgniter Version 3.1.3
+	- Google Chrome Version 80.0.3987.149 (Official Build) (64-bit)
+
+========================================================================
+Windows Requirements
+	- 1.8GHz or faster processor
+	- Windows 8.1 Pro
+	- 1GB of RAM or more recommended
+	- 1GB of available hard-disk space for installation and storage devices or more
+
+========================================================================

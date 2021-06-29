@@ -1,0 +1,3 @@
+nik,nama,jenis_kelamin,tanggal_lahir,agama,status_perkawinan,alamat,telepon,email,departemen,grup,jabatan,tanggal_masuk,akhir_kontrak,status,npwp,bank,no_rekening,pemilik_rekening,periode_penggajian,mata_uang,pph21_metode,bpjs_kesehatan,enroll,aktif,lastupdate
+17,KARYAWAN_17,Laki-Laki,1980-01-18,,K2,Bekasi Timur,1234567890,sa@sa.com,Admin,NS,HRGA,2012-03-03,2025-03-03,TETAP,987654321,BCA,1234567890,KARYAWAN_17,BULANAN,IDR,NET,Ya,433,Active,
+18,KARYAWAN_18,Peremuan,1980-01-19,,TK0,Bekasi Timur,1234567890,sa@sa.com,Admin,NS,HRGA,2012-03-04,2025-03-04,TETAP,987654321,BCA,1234567890,KARYAWAN_18,BULANAN,IDR,GROSS,Ya,434,Active,

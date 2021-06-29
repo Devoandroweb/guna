@@ -1,0 +1,94 @@
+ <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="<?php echo site_url()?>ckaryawan">guna Payroll System</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="<?php echo site_url()?>ckaryawan">Home</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Content <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="<?php echo site_url()?>cagama">Agama</a></li>
+                    <li><a href="<?php echo site_url()?>cbank">Bank</a></li>
+                    <li><a href="<?php echo site_url()?>cdepartemen">Departemen</a></li>
+                    <li><a href="<?php echo site_url()?>cgrup">Grup</a></li>
+                    <li><a href="<?php echo site_url()?>cjabatan">Jabatan</a></li>
+                    <li><a href="<?php echo site_url()?>cmatauang">Mata Uang</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="<?php echo site_url()?>cperiodepenggajiank">Komponen Gaji Periode</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="<?php echo site_url()?>cstatusaktual">Status Aktual</a></li>
+                    <li><a href="<?php echo site_url()?>cstatuskaryawan">Status Karyawan</a></li>
+                    <li><a href="<?php echo site_url()?>cstatusperkawinan">Status Perkawinan</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Master <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="<?php echo site_url()?>ckaryawan">Karyawan</a></li>
+                    <li><a href="<?php echo site_url()?>cgajikaryawan">Gaji Karyawan</a></li>
+                    <li><a href="<?php echo site_url()?>ctunjangananak">Tunjangan Anak</a></li>
+                    <li><a href="<?php echo site_url()?>covertime">Overtime</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="<?php echo site_url()?>cgshift">Grup Shift</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="<?php echo site_url()?>cjamsostek">Jamsostek</a></li>
+                    <li><a href="<?php echo site_url()?>cjamsostekkd">Jamsostek Komponen Dasar</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><a href="<?php echo site_url()?>cgaji">Gaji</a></li>
+                    <li><a href="<?php echo site_url()?>cpphk">PPH 21 Komponen</a></li>
+                    <li><a href="<?php echo site_url()?>cpphp">PPH 21 PTKP</a></li>
+                    <li><a href="<?php echo site_url()?>cppht">PPH 21 Tarif</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Transaksi <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo site_url()?>cspl">Overtime</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li><a href="<?php echo site_url()?>cgajikaryawanperiode">Gaji Karyawan Periode</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li><a href="<?php echo site_url()?>cthr">PPH 21 - THR</a></li>
+                        <li><a href="<?php echo site_url()?>cbonus">PPH 21 - Bonus Tahunan</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li><a href="<?php echo site_url()?>ctpgajikaryawan">Periode Gaji Karyawan</a></li>
+                        <li><a href="<?php echo site_url()?>cperiodej">Periode Jamsostek</a></li>
+                        <li><a href="<?php echo site_url()?>cperiodepph21">Periode PPH21</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li><a href="<?php echo site_url()?>ctsalary">Lap. Total Salary</a></li>
+                        <li><a href="<?php echo site_url()?>cperiodepph21clear">PPH 21 Clear</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Absensi <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo site_url()?>cabsen">Absen</a></li>
+                        <li><a href="<?php echo site_url()?>ctransct">Absen - Commited</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li><a href="<?php echo site_url()?>cabsensakitcuti">Absen - Sakit/Cuti</a></li>
+                    </ul>
+                </li>
+                
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrator <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo site_url()?>cmuser">Manage User</a></li>
+                        <li><a href="<?php echo site_url()?>cbackup">Backup</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li><a href="<?php echo base_url('cperiode'); ?>">Periode</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li><a href="<?php echo base_url('clogin/logout'); ?>">Logout</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Template <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo base_url('download/karyawan.csv'); ?>">Karyawan</a></li>
+                        <li><a href="<?php echo site_url()?>download/absensi.csv">Absensi</a></li>
+                    </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+    </nav>

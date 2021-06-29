@@ -1,0 +1,83 @@
+GENERAL 
+- tittle bar sesuai menu -> Referensi | Agama 
+- logo ubah jadi https://logosbynick.com/wp-content/uploads/2018/03/final-logo-example.png
+- favicon buak *
+- header kanan buak kabeh kecuali image *
+- format tgl diubah jadi DD-MM-YYYY + time *
+- Copyright ganti Aptikma. kiri *
+- footer kanan : Aplikasi Absensi dan Penggajian V 2.7*
+
+Header kanan, ada profil. buat halaman baru *
+ada image juga
+
+brand-logo-example
+
+
+Content - komponen gaji periode  -> hide, buat trigger ndek DB*
+Master - gaji karyawan -> Struktur Gaji 
+Master - Gaji -> Komponen gaji
+Transaksi - Gaji karyawan periode -> Bayar gaji 
+Transaksi - Periode Gaji Karyawan -> Riwayat Gaji 
+
+
+
+
+Dashboard -> gawien halaman anyar, *
+
+Referensi 
+- Agama 
+- Bank 
+- Departemen
+- Grup 
+- Jabatan
+- Mata uang
+- Status absen
+- Status karyawan 
+- Status Perkawaninan
+
+Master 
+- Karyawan. tambah upload image 
+- Komponen Gaji -> seng awale Master - gaji karyawan 
+- Komponen jamsostek
+- Komponen PPh 21
+- Shift
+- PTKP PPH 21
+- PPH 21 tarif
+
+Penggajian 
+	Konfigurasi
+	- Struktur gaji -> awal e master - gaji karyawan 
+	- Tunjangan Anak
+	- Jamsostek
+	- Overtime
+
+	Proses
+	- Bayar gaji 
+	- Overtime 
+
+Riwayat 
+- Penggajian -> yg lama transkasi - periode gaji karyawan
+- PPH 21 Gaji -> yg lama periode PPH21
+- PPh 21 Bonus tahunan
+- Jamsostek 
+
+Lain 
+- Total salary 
+- Rekap PPh 21 
+
+
+Absensi
+- Data finger print
+- Rekap absen 
+- Izin/Cuti
+
+Administrator
+- Pengguna 
+- Periode
+- Back up -> buat tampilan, kek ono tombol siji. 
+
+Template buak, pindah nang karyawan dan absensi 
+
+Icon -> kek ono image 
+- Profil
+- Logout
