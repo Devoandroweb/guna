@@ -101,11 +101,11 @@ class Ctpgajikaryawan extends CI_Controller {
                     $aQueryColumns[] = $col;
                 }
             }
-            $output = "";
+            //$output = "";
             // $this->db->reconnect();
             foreach ($query->result_array() as $aRow) {
-                $p = $this->session->userdata('periode');
-                $q = $this->db->query("SELECT * FROM trans_periode WHERE periode = '".$p."'")->row();
+                //$p = $this->session->userdata('periode');
+                //$q = $this->db->query("SELECT * FROM trans_periode WHERE periode = '".$p."'")->row();
                 
                     
                     $row = array($aRow['nik'],$aRow['periode'],$aRow['nama'],$aRow['departemen'],$aRow['jabatan'],$this->fungsi->dateToIndo($aRow['tanggal_masuk']));

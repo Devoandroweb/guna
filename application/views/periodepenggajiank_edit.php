@@ -56,13 +56,18 @@
                             <input type="hidden" name="kode_gaji_lama" value="<?= $row->kode_gaji ?>">
                             <select required="required" id="grup" name="kode_gaji" class="form-control col-md-4 input-smm">
                                 <option></option>
-                                <?php foreach($query->result() as $value):
+                                <?php foreach($gaji as $value):
                                 	$selected = "";
-                                	if ($row->kode_gaji == $value->kode_gaji) {
-                                		$selected = "selected";
-                                	}
+
+                                	if ($query->kode_gaji == $value->kode_gaji) {
+                                	
+                                        echo '<option selected>'.$value->$kode_gaji.'</option>';
+                                	}else{
+                                        echo '<option>'.$value->$kode_gaji.'</option>';
+                                    }
                                 	?>
-                                <option <?= $selected; ?> ><?php echo $row->kode_gaji?></option>
+                                
+
                                 <?php endforeach;?>
                             </select>
                         </div>

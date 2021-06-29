@@ -102,7 +102,7 @@ class Cgajikaryawan extends CI_Controller {
                     $aQueryColumns[] = $col;
                 }
             }
-            $output = "";
+            // $output = "";
             $this->db->reconnect();
             foreach ($query->result_array() as $aRow) {
                 $p = $this->session->userdata('periode');
@@ -130,7 +130,7 @@ class Cgajikaryawan extends CI_Controller {
         $this->db->where('nik',$nik);
         $data['query'] = $this->db->get($this->sTables);
         $data['querys'] = $this->db->get($this->sTabless);
-        $this->db->where('status','1');
+        // $this->db->where('status','1');
 
         $data['nik'] = $nik;
         $this->header();

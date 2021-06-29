@@ -833,6 +833,7 @@
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link <?= $this->fungsi->active_menu(10,$active_menu); ?>" href="<?= site_url()?>ckaryawan">Karyawan</a></li>
                 <li class="nav-item"> <a class="nav-link <?= $this->fungsi->active_menu(11,$active_menu); ?>" href="<?= site_url()?>cgajikaryawan">Komponen Gaji</a></li>
+               <!--  <li class="nav-item"> <a class="nav-link <?= $this->fungsi->active_menu(36,$active_menu); ?>" href="<?= site_url()?>cperiodepenggajiank">Komponen Gaji Periode</a></li> -->
                 <!-- <li class="nav-item"> <a class="nav-link" href="<?= site_url()?>ctunjangananak">Tunjangan Anak</a></li> -->
                 <!-- <li class="nav-item"> <a class="nav-link" href="<?= site_url()?>covertime">Overtime</a></li> -->
                 <!-- <li class="nav-item"> <a class="nav-link" href="<?= site_url()?>cjamsostek">Jamsostek</a></li> -->

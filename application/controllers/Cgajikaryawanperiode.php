@@ -100,7 +100,7 @@ class Cgajikaryawanperiode extends CI_Controller {
                     $aQueryColumns[] = $col;
                 }
             }
-            //$output = ""; sip??
+            // $output = ""; 
             // sip pak
             
             $this->db->reconnect();

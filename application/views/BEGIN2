@@ -1,0 +1,248 @@
+BEGIN
+  Delete from trans_periode_pph21 where periode=XPeriode and periode_penggajian=XPeriode_Penggajian and segmen=XSegmen;
+  DELETE FROM trans_periode_pph21_tarif where periode=XPeriode and periode_penggajian=XPeriode_Penggajian and segmen=XSegmen;
+  Insert into trans_periode_pph21(periode,periode_penggajian,segmen,nik,nama,status_perkawinan,status_kerja,bank,no_rekening,npwp,departemen,jabatan,tanggal_masuk,lastupdate,user_id) 
+
+  select a.periode,a.periode_penggajian,a.segmen,a.nik,a.nama,a.status_perkawinan,a.status_kerja,a.bank,a.no_rekening,a.npwp,a.departemen,a.jabatan,a.tanggal_masuk,sysdate(),'SYS'
+    from trans_periode_gaji_karyawan a join master_pph21_komponen b on a.kode_gaji=b.kode_gaji
+    join master_gaji c on a.kode_gaji=b.kode_gaji
+    where a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen
+    group by a.periode,a.periode_penggajian,a.segmen,a.nik,a.status_perkawinan,a.status_kerja,a.npwp,a.departemen;
+    
+    UPDATE trans_periode_pph21 a join (SELECT trans_periode.periode, trans_periode.thr
+    FROM trans_periode) b 
+    on a.periode=b.periode
+    SET periode_thr=b.thr
+    WHERE a.periode=XPeriode and a.periode_penggajian='BULANAN' and a.segmen=1;
+
+    UPDATE trans_periode_pph21 a join (SELECT vspl.nik, vspl.jumlah_jam AS total_jam, master_gaji_karyawan_periode.periode, master_gaji_karyawan_periode.nilai_gaji, master_gaji_karyawan_periode.kode_gaji
+    FROM vspl JOIN master_gaji_karyawan_periode ON vspl.nik = master_gaji_karyawan_periode.nik and vspl.periode=master_gaji_karyawan_periode.periode group by master_gaji_karyawan_periode.nik, master_gaji_karyawan_periode.periode) b 
+    on a.periode=b.periode AND a.nik=b.nik
+    SET over_time_index=b.total_jam
+    WHERE a.periode=XPeriode and a.periode_penggajian='BULANAN' and a.segmen=1;
+    
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,count(status_aktual) as kehadiran FROM master_mesin_clear 
+    WHERE status_aktual = 'Hadir' group by periode, nik) b
+    on a.nik=b.nik and a.periode=b.periode SET a.kehadiran=b.kehadiran
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,count(status) as ketidakhadiran FROM master_absen_sakit_cuti 
+    WHERE status = 'Tanpa Keterangan' group by periode, nik) b
+    on a.nik=b.nik and a.periode=b.periode SET a.ketidakhadiran=b.ketidakhadiran
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+    
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,nilai_gaji
+    FROM master_gaji_karyawan_periode where kode_gaji=101) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.potongan_ketidakhadiran=if(a.jabatan='STAFF',((a.ketidakhadiran/21)*b.nilai_gaji),((a.ketidakhadiran/25)*b.nilai_gaji))
+    WHERE a.periode=XPeriode and a.periode_penggajian='BULANAN' and a.segmen=1;
+
+    UPDATE trans_periode_pph21 a join (select nik, periode, dari_tanggal, sampai_tanggal, sum(datediff(sampai_tanggal, dari_tanggal)) as jumlah
+    from master_absen_sakit_cuti
+    where status ='Sakit' group by nik,periode) b
+    on a.nik=b.nik and a.periode=b.periode SET sakit=b.jumlah
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select nik, periode, dari_tanggal, sampai_tanggal, datediff(sampai_tanggal, dari_tanggal) as jumlah
+    from master_absen_sakit_cuti
+    where status ='Cuti' group by nik,periode) b
+    on a.nik=b.nik and a.periode=b.periode SET a.cuti=b.jumlah
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT nik, periode, Count(keterangan) AS terlambat
+    FROM master_mesin_clear where keterangan='Terlambat' group by nik,periode) b
+    on a.nik=b.nik and a.periode=b.periode SET a.terlambat=b.terlambat
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 set kct=(ketidakhadiran+sakit+terlambat)
+    WHERE periode=XPeriode and periode_penggajian=XPeriode_Penggajian and segmen=XSegmen;
+    
+    UPDATE trans_periode_pph21 a join (select trans_periode.periode, trans_periode_pph21.nik, trans_periode_pph21.nama, trans_periode_pph21.tanggal_masuk, datediff(trans_periode.selesai, trans_periode_pph21.tanggal_masuk) as lama_kerja
+    from trans_periode join trans_periode_pph21 on trans_periode.periode=trans_periode_pph21.periode) b 
+    on a.periode=b.periode and a.nik=b.nik
+    SET a.lama_kerja=b.lama_kerja
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select jenis, periode, periode_penggajian, segmen, nik, nilai as base
+    from trans_periode_gaji_karyawan
+    where kode_gaji='101'
+    group by periode,periode_penggajian,segmen,nik) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.base=if(a.lama_kerja='0',b.base,if(a.lama_kerja > 20,b.base,((a.lama_kerja*8)/173)*b.base))
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,nilai
+    FROM trans_periode_gaji_karyawan 
+    where kode_gaji='301'
+    group by periode,periode_penggajian,segmen,nik) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.tunjangan_transport=b.nilai
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select jenis, periode, periode_penggajian, segmen, nik, nilai as tunjangan_kendaraan
+    from trans_periode_gaji_karyawan
+    where kode_gaji='302'
+    group by periode,periode_penggajian,segmen,nik) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.tunjangan_kendaraan=b.tunjangan_kendaraan
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,nilai
+    FROM trans_periode_gaji_karyawan where kode_gaji='303') b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.tunjangan_makan=b.nilai
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,nilai_gaji
+    FROM master_gaji_karyawan_periode where kode_gaji=304) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.tunjangan_anak=b.nilai_gaji
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,nilai
+    FROM trans_periode_gaji_karyawan where kode_gaji=305) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.sales_incentive=b.nilai
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode,nik,nilai 
+    from trans_periode_gaji_karyawan 
+    where kode_gaji='308') b on a.periode=b.periode 
+    AND a.nik=b.nik set a.bonus=b.nilai
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,nilai
+    FROM trans_periode_gaji_karyawan where kode_gaji=402) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.adjustment_plus=b.nilai
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode,periode_penggajian,segmen,nik,    
+    (0.3/100)*(base+tunjangan_anak+tunjangan_kendaraan) as jkm_perusahaan
+    from trans_periode_pph21
+    group by periode,periode_penggajian,segmen,nik) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.jkm_perusahaan=b.jkm_perusahaan
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode,periode_penggajian,segmen,nik,
+    (0.89/100)*(base+tunjangan_anak+tunjangan_kendaraan) as jkk_perusahaan
+    from trans_periode_pph21
+    group by periode,periode_penggajian,segmen,nik) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.jkk_perusahaan=b.jkk_perusahaan
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode,periode_penggajian,segmen,nik,
+    (3.70/100)*(base+tunjangan_anak+tunjangan_kendaraan) as jht_perusahaan
+    from trans_periode_pph21
+    group by periode,periode_penggajian,segmen,nik) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.jht_perusahaan=b.jht_perusahaan
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode, nik, base, tunjangan_kendaraan, tunjangan_anak
+    from trans_periode_pph21) b on a.periode=b.periode AND a.nik=b.nik
+    set a.jkn_perusahaan=if(b.base+b.tunjangan_anak+b.tunjangan_kendaraan >= 8000000,0.04*(8000000),0.04*(b.base+b.tunjangan_kendaraan+b.tunjangan_anak))
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode, nik, base, tunjangan_kendaraan, tunjangan_anak
+    from trans_periode_pph21) b on a.periode=b.periode AND a.nik=b.nik
+    set a.jpn_perusahaan=if(b.base+b.tunjangan_anak+b.tunjangan_kendaraan >= 7703500,0.02*(7703500),0.02*(b.base+b.tunjangan_kendaraan+b.tunjangan_anak))
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT vspl.nik, vspl.jumlah_jam AS total_jam, master_gaji_karyawan_periode.periode, master_gaji_karyawan_periode.nilai_gaji, master_gaji_karyawan_periode.kode_gaji, master_tunjangan_anak.nilai
+    FROM (master_karyawan INNER JOIN (vspl INNER JOIN master_gaji_karyawan_periode ON vspl.nik = master_gaji_karyawan_periode.nik) ON master_karyawan.nik = master_gaji_karyawan_periode.nik) INNER JOIN master_tunjangan_anak ON master_karyawan.status_perkawinan = master_tunjangan_anak.status_perkawinan
+    GROUP BY master_gaji_karyawan_periode.periode, master_gaji_karyawan_periode.nik, master_tunjangan_anak.nilai) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.over_time=((a.base+a.tunjangan_kendaraan+a.tunjangan_anak+a.jkm_perusahaan+a.jkk_perusahaan+a.jht_perusahaan+a.jkn_perusahaan+a.jpn_perusahaan)/173)*a.over_time_index
+    WHERE a.periode=XPeriode and a.periode_penggajian='BULANAN' and a.segmen=1;
+
+    UPDATE trans_periode_pph21 a SET a.penghasilan_kotor=a.base + a.over_time + a.tunjangan_transport + a.tunjangan_kendaraan + a.tunjangan_makan + a.tunjangan_anak + a.sales_incentive + a.bonus + a.adjustment_plus + a.jkm_perusahaan + a.jkk_perusahaan + a.jht_perusahaan + a.jkn_perusahaan + a.jpn_perusahaan
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode,periode_penggajian,segmen,nik,
+    (2/100)*(base+tunjangan_anak+tunjangan_kendaraan) as jht_karyawan
+    from trans_periode_pph21
+    group by periode,periode_penggajian,segmen,nik) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.jht_karyawan=b.jht_karyawan
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode, nik, base, tunjangan_kendaraan, tunjangan_anak
+    from trans_periode_pph21) b on a.periode=b.periode AND a.nik=b.nik
+    set a.jpn_karyawan=if(b.base+b.tunjangan_kendaraan+b.tunjangan_anak >= 7703500,0.01*(7703500),0.01*(b.base+b.tunjangan_kendaraan+b.tunjangan_anak))
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode, nik, base, tunjangan_kendaraan, tunjangan_anak
+    from trans_periode_pph21) b on a.periode=b.periode AND a.nik=b.nik
+    set a.bpjs_kesehatan_karyawan=if(b.base+b.tunjangan_kendaraan+b.tunjangan_anak >= 8000000,0.01*(8000000),0.01*(b.base+b.tunjangan_kendaraan+b.tunjangan_anak))
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select periode, nik, base, tunjangan_kendaraan, tunjangan_anak
+    from trans_periode_pph21) b on a.periode=b.periode AND a.nik=b.nik
+    set a.biaya_jabatan=if(b.base+b.tunjangan_kendaraan+b.tunjangan_anak >= 6000000,500000,0.05*(b.base+b.tunjangan_kendaraan+b.tunjangan_anak))
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a set a.total_pengurang=a.jht_karyawan + a.jpn_karyawan + a.biaya_jabatan
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a set a.netto=a.penghasilan_kotor - a.total_pengurang
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a set a.netto_setahun=a.netto*12
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join master_pph21_ptkp b on a.status_perkawinan=b.status_perkawinan
+    SET a.ptkp_gaji=b.nilai_ptkp
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a set a.penghasilan_kena_pajak=a.netto_setahun - a.ptkp_gaji
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a set a.tunjangan_jamsostek=a.jkm_perusahaan + a.jkk_perusahaan + a.jht_perusahaan + a.jkn_perusahaan + a.jpn_perusahaan 
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,nilai
+    FROM trans_periode_gaji_karyawan where kode_gaji=403) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.adjustment_minus=b.nilai
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+    
+    UPDATE trans_periode_pph21 a join (SELECT nik,periode,nilai
+    FROM trans_periode_gaji_karyawan where kode_gaji=401) b 
+    on a.periode=b.periode AND a.nik=b.nik 
+    SET a.potongan_koperasi=b.nilai
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    INSERT into trans_periode_pph21_tarif
+    select a.periode,a.periode_penggajian,a.segmen,'gaji',a.nik,b.kode_tarif,
+    if(a.penghasilan_kena_pajak<b.batas_bawah,0,if(a.penghasilan_kena_pajak>=b.batas_atas,b.batas_atas-(b.batas_bawah-1),a.penghasilan_kena_pajak-b.batas_bawah-1)),b.tarif,
+    if(a.penghasilan_kena_pajak<b.batas_bawah,0,if(a.penghasilan_kena_pajak>=b.batas_atas,b.batas_atas-(b.batas_bawah-1),a.penghasilan_kena_pajak-b.batas_bawah-1))*b.tarif,
+    sysdate(),'SYS' from trans_periode_pph21 a,master_pph21_tarif b
+    where a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join
+    (select periode,periode_penggajian,segmen,nik,sum(nilai_pph21) as pph21_gaji from trans_periode_pph21_tarif
+    where jenis='gaji' group by periode,periode_penggajian,segmen,nik) b
+    ON a.periode=b.periode AND a.periode_penggajian=b.periode_penggajian AND a.segmen=b.segmen
+    AND a.nik=b.nik SET a.pph21_gaji_setahun=b.pph21_gaji
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a set a.pph21_gaji_sebulan=a.pph21_gaji_setahun/12
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a set a.tambahan_non_npwp=if(a.npwp='' or a.npwp='-' or a.npwp='0',a.pph21_gaji_sebulan*0.2,0)
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a join (select nik,pph21_metode from master_karyawan) b on a.nik=b.nik set a.metode_pph21=b.pph21_metode
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    UPDATE trans_periode_pph21 a set a.pph21_nett=a.pph21_gaji_sebulan + a.tambahan_non_npwp
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+    
+    UPDATE trans_periode_pph21 a set a.thp=if(a.metode_pph21='NET',(a.penghasilan_kotor + a.pph21_gaji_sebulan) - (a.pph21_gaji_sebulan + a.tambahan_non_npwp + a.tunjangan_jamsostek + a.jht_karyawan + a.jpn_karyawan + a.bpjs_kesehatan_karyawan + a.potongan_koperasi + a.adjustment_minus),a.penghasilan_kotor - (a.pph21_gaji_sebulan + a.tambahan_non_npwp + a.tunjangan_jamsostek + a.jht_karyawan + a.jpn_karyawan + a.bpjs_kesehatan_karyawan + a.potongan_koperasi + a.adjustment_minus)) 
+    WHERE a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and a.segmen=XSegmen;
+
+    
+END

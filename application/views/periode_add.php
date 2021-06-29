@@ -24,13 +24,13 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="mulai">Mulai</label>
-                                    <input type="text" required="required" class="form-control input-smm" name="mulai" id="tgl" placeholder="Mulai" />
+                                    <input type="date" required="required" class="form-control input-smm" name="mulai" id="tgl" placeholder="Mulai" />
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
                                     <label for="selesai">Selesai</label>
-                                    <input type="text" required="required" class="form-control input-smm" name="selesai" id="tgla" placeholder="Selesai" />
+                                    <input type="date" required="required" class="form-control input-smm" name="selesai" id="tgla" placeholder="Selesai" />
                                 </div>
                                 <div class="form-group">
                                     <label for="thr">THR</label>

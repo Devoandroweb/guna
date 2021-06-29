@@ -110,6 +110,7 @@ class Fungsi{
             33 => "Pengguna" ,
             34 => "Periode",
             35 => "Back up",
+            36 => "Komponen Gaji Periode",
         );
 
         $result = $stringTitleBar[$titleBar]." | ".$titleString[$value];

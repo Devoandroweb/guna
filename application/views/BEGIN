@@ -1,0 +1,52 @@
+BEGIN
+  DELETE FROM trans_periode_gaji_karyawan where periode=XPeriode and periode_penggajian=XPeriode_Penggajian and segmen=XSegmen;
+  BlockInsertSalary:BEGIN
+    DECLARE DONE Boolean default FALSE;
+    DECLARE SalaryId VARCHAR(25);
+
+    DECLARE CurSalary cursor for select a.kode_gaji from master_periode_penggajian_komponen a
+      join master_gaji b on a.kode_gaji=b.kode_gaji
+      WHERE a.periode_penggajian=XPeriode_Penggajian and segmen=XSegmen and b.jenis<>'Lembur'
+      and b.jenis<>'Potongan Jamsostek' and b.jenis<>'Potongan Pph21';
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET DONE = TRUE;
+    OPEN CurSalary;
+
+    set DONE=FALSE;
+    GetSalary : LOOP
+      FETCH CurSalary into SalaryId;
+      if DONE=TRUE then
+        LEAVE GetSalary;
+      end if;
+      Select rumus,periode_hitung into @SQLCondition,@SalaryPeriodPayment from master_gaji where kode_gaji=SalaryId;
+      Set @Period =XPeriode;
+      Set @Segment=XSegmen;
+      Set @Periode_Penggajian =XPeriode_Penggajian;
+      Set @SalaryId=SalaryId;
+      Set @DefaultUser='SYS';
+      CASE
+        WHEN @SalaryPeriodPayment= 'bulan' THEN
+          SET @SQLStr = concat('insert into trans_periode_gaji_karyawan(periode,periode_penggajian,segmen,nik, nama,status_perkawinan,departemen,grup,jabatan,tanggal_masuk,status_kerja,kode_gaji,keterangan_gaji,jenis,nilai,lastupdate,user_id)           
+          select distinct 
+          master_gaji_karyawan_periode.periode, 
+          master_periode_penggajian_komponen.periode_penggajian,
+          master_periode_penggajian_komponen.segmen, 
+          master_karyawan.nik, 
+          master_karyawan.nama, 
+          master_karyawan.status_perkawinan, master_karyawan.departemen, master_karyawan.grup, master_karyawan.jabatan, master_karyawan.tanggal_masuk, master_karyawan.status,@SalaryId,master_gaji.keterangan,master_gaji.jenis,',@SQLCondition,',sysdate(),@DefaultUser from master_karyawan join master_gaji_karyawan_periode on master_gaji_karyawan_periode.nik = master_karyawan.nik join master_periode_penggajian_komponen on master_periode_penggajian_komponen.kode_gaji=master_gaji_karyawan_periode.kode_gaji join master_gaji on master_periode_penggajian_komponen.kode_gaji = master_gaji.kode_gaji where master_gaji_karyawan_periode.periode=@Period and master_periode_penggajian_komponen.periode_penggajian=@Periode_Penggajian and master_periode_penggajian_komponen.segmen=@Segment and master_gaji_karyawan_periode.periode=@Period and master_gaji_karyawan_periode.kode_gaji=@SalaryId');
+        WHEN @SalaryPeriodPayment='hari' THEN
+          SET @SQLStr = concat('insert into trans_periode_gaji_karyawan(periode,periode_penggajian,segmen,nik, nama,status_perkawinan,departemen,grup,jabatan,tanggal_masuk,status_kerja,kode_gaji,keterangan_gaji,jenis,nilai,lastupdate,user_id) select master_gaji_karyawan_periode.periode,trans_periode.periode_penggajian,trans_periode.segmen,master_mesin_clear.nik,master_karyawan.nama,master_karyawan.status_perkawinan,master_karyawan.departemen,master_karyawan.grup,master_karyawan.jabatan,tanggal_masuk,master_karyawan.status as status_kerja,master_gaji_karyawan_periode.kode_gaji,master_gaji.keterangan,master_gaji.jenis, sum(',@SQLCondition,'),sysdate(),@DefaultUser from master_mesin_clear join master_gaji_karyawan_periode on master_mesin_clear.nik=master_gaji_karyawan_periode.nik join trans_periode on master_mesin_clear.tanggal>=trans_periode.mulai and master_mesin_clear.tanggal<=trans_periode.selesai and master_gaji_karyawan_periode.periode=trans_periode.periode join master_karyawan on master_karyawan.nik=master_mesin_clear.nik join master_gaji on master_gaji.kode_gaji=master_gaji_karyawan_periode.kode_gaji where master_gaji_karyawan_periode.periode=@Period and trans_periode.periode_penggajian=@Periode_Penggajian and trans_periode.segmen=@Segment and master_gaji_karyawan_periode.kode_gaji=@SalaryId group by master_gaji_karyawan_periode.periode,trans_periode.periode_penggajian,trans_periode.segmen,master_mesin_clear.nik,master_mesin_clear.nama,master_mesin_clear.status_perkawinan,master_mesin_clear.departemen,master_mesin_clear.jabatan,master_mesin_clear.status_kerja,master_gaji_karyawan_periode.kode_gaji,master_gaji.keterangan,master_gaji.jenis');
+        ELSE
+          BEGIN
+          END;
+      END CASE;
+      PREPARE stmt FROM @SQLStr;
+      EXECUTE  stmt;
+      DEALLOCATE PREPARE stmt;
+    END LOOP GetSalary;
+    CLOSE CurSalary;
+  END BlockInsertSalary;
+  Update trans_periode_gaji_karyawan a join master_karyawan b on a.nik=b.nik
+  set a.npwp=b.npwp,a.bank=b.bank,a.no_rekening=b.no_rekening,a.pemilik_rekening=b.pemilik_rekening,
+  a.mata_uang=b.mata_uang Where a.periode=XPeriode and a.periode_penggajian=XPeriode_Penggajian and
+  a.segmen=XSegmen;
+END

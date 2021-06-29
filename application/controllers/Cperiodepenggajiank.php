@@ -13,7 +13,8 @@ class Cperiodepenggajiank extends CI_Controller {
 	}
 
 	public function index(){
-        $this->load->view('header');
+        // $this->load->view('header');
+        $this->header();
         $this->load->view('periodepenggajiank_view');
 	}
 
@@ -118,11 +119,14 @@ FROM master_periode_penggajian_komponen INNER JOIN master_gaji ON master_periode
             $this->db->where("periode_penggajian",$periode_penggajian);
             $this->db->where("segmen",$segmen);
             $this->db->where("kode_gaji",$kode_gaji);
-            $query = $this->db->get();
+            $query = $this->db->get()->row();
 
             $data['query'] = $query;
+            $this->db->select('kode_gaji');
+            $this->db->from('master_gaji');
+            $data['gaji'] = $this->db->get()->result();
 
-            $this->load->view("header");
+            $this->header();
             $this->load->view("periodepenggajiank_edit",$data);
 
     }   
@@ -155,7 +159,7 @@ FROM master_periode_penggajian_komponen INNER JOIN master_gaji ON master_periode
     }
     function tambah(){
         $data['query'] = $this->db->get('master_gaji');
-        $this->load->view('header');
+        $this->header();
         $this->load->view('periodepenggajiank_add', $data);
     }
 
@@ -171,5 +175,15 @@ FROM master_periode_penggajian_komponen INNER JOIN master_gaji ON master_periode
         $this->periodepenggajiank->add_record($data);
         redirect('cperiodepenggajiank');
     }
-    
+    function detail(){
+        
+    }
+    function header(){
+        $this->load->helper('url');
+        $data['active_accordion'] = "c";
+        $data['aria_expanded'] = "c";
+        $data['sub_menu_show'] = "c";
+        $data['active_menu'] = 36;
+        $this->load->view('header',$data);
+    }
 }

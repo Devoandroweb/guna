@@ -29,9 +29,7 @@
                                     <th>Departemen</th>
                                     <th>Jabatan</th>
                                     <th>Tanggal Masuk</th>
-                                    <!-- <?php foreach($query->result() as $row):?>
-                                    <th><?php echo $row->keterangan;?></th>
-                                    <?php endforeach;?> -->
+                                    
                                 </tr>
                             </thead>
                             </tfoot>
@@ -142,7 +140,7 @@
                             }
                         ],
                         "language": {
-                            "lengthMenu": 'se _MENU_',
+                            "lengthMenu": '_MENU_',
                             "zeroRecords": "-kosong-",
                             "infoEmpty": "-kosong-",
                             "infoFiltered": "(_MAX_ total)",
