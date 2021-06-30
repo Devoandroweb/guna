@@ -53,33 +53,64 @@ class Claporanall extends CI_Controller {
             FROM master_karyawan INNER JOIN trans_periode_jamsostek ON master_karyawan.nik = trans_periode_jamsostek.nik
             WHERE (((master_karyawan.nik)='$bb[nik]') AND ((trans_periode_jamsostek.periode)='$periode'))")->result_array();
             $qlogo = $this->db->query("SELECT * FROM master_perusahaan WHERE status='aktif'")->row();
+            // <td colspan="2" align="left">Salary Slip : '.$per.'</td>
             $html = '
-            <table width="100%" border="0" cellpadding="1" cellspacing="1" style="font-size:8px;">
-            <tr>
-                <td colspan="2" align="left">Salary Slip : '.$per.'</td>
-                <td colspan="3" align="center"><img src="logo/'.$qlogo->logo_perusahaan.'" /></td>
-            </tr>
-            <tr>
-                <td colspan="5" align="left">Name : '.$bb['nama'].'/'.$bb['nik'].'</td>
-            </tr>
-            <tr>
-                <td colspan="3" align="left">NPWP : '.$bb['npwp'].'</td>
-                <td colspan="2" align="left">PPH21 Metode : '.$bb['pph21_metode'].'</td>
-            </tr>
-            <tr>
-                <td colspan="3" align="left">Position : '.$bb['jabatan'].'</td>
-                <td colspan="2" align="left">Bank : '.$bb['bank'].'/'.$bb['no_rekening'].'</td>
-            </tr>
-            <tr>
-                <td colspan="3" align="left">Department : '.$bb['departemen'].'</td>
-                <td colspan="2" align="left">Status Perkawinan : '.$bb['status_perkawinan'].'</td>
-            </tr>
-            <tr>
-                <td colspan="2" align="left">&nbsp;</td>
-                <td colspan="2" align="left">Kehadiran : '.number_format($qlaporan->kehadiran,0,',','.').' Hari</td>
-                <td align="left">OT Hours : '.number_format($qlaporan->over_time_index,2,',','.').'</td>
-            </tr>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:8px;">
+                <tr>
+                    <td colspan="3" align="left"><img width="100px" src="logo/'.$qlogo->logo_perusahaan.'" /><br></td>
+                    <td colspan="2" align="right"><h1>PAYSLIP</td></td>
+                </tr>
+                
+                <tr>
+                    <td width="50%">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:8px;">
+                            <tr>
+                                <td colspan="5" align="left">Name : '.$bb['nama'].'/'.$bb['nik'].'</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="left">NPWP : '.$bb['npwp'].'</td>
+                                
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="left">Pos. : '.$bb['jabatan'].'</td>
+                             
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="left">Department : '.$bb['departemen'].'</td>
+                                
+                            </tr>
+                            
+                        </table>
+                    </td>
+                    <td width="50%" >
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:8px; margin-top:5px;">
+                            <tr>
+                                <td align="center" bgcolor="#cecbcb">Salary Slip</td>
+                                <td align="center" bgcolor="#cecbcb">BANK</td>
+                                <td align="center" bgcolor="#cecbcb">PPH21</td>
+                            </tr>
+                            <tr>
+                                <td align="center">'.$per.'</td>
+                                <td align="center">'.$bb['bank'].'/'.$bb['no_rekening'].'</td>
+                                <td align="center">'.$bb['pph21_metode'].'</td>
+                            </tr>
+                            <tr>
+                                <td align="center" bgcolor="#cecbcb">Perkawinan</td>
+                                <td align="center" bgcolor="#cecbcb">Kehadiran</td>
+                                <td align="center" bgcolor="#cecbcb">OT Hours</td>
+                            </tr>
+                            <tr>
+                                <td align="center">'.$bb['status_perkawinan'].'</td>
+                                <td align="center">'.number_format($qlaporan->kehadiran,0,',','.').' Hari</td>
+                                <td align="center">'.number_format($qlaporan->over_time_index,2,',','.').'</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                
             </table>
+
+
         ';
         $pdf->AddPage('P','A6');
         $left='
