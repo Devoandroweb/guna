@@ -61,51 +61,59 @@ HAVING (((trans_periode_jamsostek.nik)='$nik') AND ((trans_periode_jamsostek.per
             <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:8px;">
                 <tr>
                     <td colspan="3" align="left"><img width="100px" src="logo/'.$qlogo->logo_perusahaan.'" /><br></td>
-                    <td colspan="2" align="right"><h1>PLAYSLIP</td></td>
+                    <td colspan="2" align="right"><h1>SLIP GAJI</td></td>
                 </tr>
                 
                 <tr>
-                    <td width="50%">
+                    <td width="40%">
                         <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:8px;">
                             <tr>
-                                <td colspan="5" align="left">Name : '.$nama.'/'.$nik.'</td>
+                                <td bgcolor="#cecbcb">Identitas Pegawai</td>
                             </tr>
                             <tr>
-                                <td colspan="3" align="left">NPWP : '.$npwp.'</td>
+                                <td colspan="5" align="left">'.$nama.'/'.$nik.'</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="left">'.$jabatan.'</td>
                                 
                             </tr>
                             <tr>
-                                <td colspan="3" align="left">Pos. : '.$jabatan.'</td>
+                                <td colspan="3" align="left">'.$departemen.'</td>
                              
                             </tr>
                             <tr>
-                                <td colspan="3" align="left">Department : '.$departemen.'</td>
+                                <td colspan="3" align="left">'.$npwp.'</td>
                                 
                             </tr>
                             
                         </table>
                     </td>
-                    <td width="50%">
+                    <td width="60%">
                         <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:8px; margin-top:5px;">
                             <tr>
-                                <td align="center" bgcolor="#cecbcb">Salary Slip</td>
-                                <td align="center" bgcolor="#cecbcb">BANK</td>
+                                <td align="center" bgcolor="#cecbcb">Periode</td>
                                 <td align="center" bgcolor="#cecbcb">PPH21</td>
+                                <td align="center" bgcolor="#cecbcb">Perkawinan</td>
                             </tr>
                             <tr>
                                 <td align="center">'.$per.'</td>
-                                <td align="center">'.$bank.'/'.$no_rekening.'</td>
                                 <td align="center">'.$pph21_met.'</td>
+                                <td align="center">'.$status_perkawinan.'</td>
                             </tr>
                             <tr>
-                                <td align="center" bgcolor="#cecbcb">Perkawinan</td>
                                 <td align="center" bgcolor="#cecbcb">Kehadiran</td>
                                 <td align="center" bgcolor="#cecbcb">OT Hours</td>
+                                <td align="center"></td>
                             </tr>
                             <tr>
-                                <td align="center">'.$status_perkawinan.'</td>
                                 <td align="center">'.number_format($qlaporan->kehadiran,0,',','.').' Hari</td>
                                 <td align="center">'.number_format($qlaporan->over_time_index,2,',','.').'</td>
+                                <td align="center"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">BANK : '.$bank.'/'.$no_rekening.'</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </table>
                     </td>
@@ -315,6 +323,17 @@ HAVING (((trans_periode_jamsostek.nik)='$nik') AND ((trans_periode_jamsostek.per
                 </tr>
             </table>
         ';
+        $htmls .= '<br><br><br><table width="100%" border="0" cellpadding="2" cellspacing="2" style="font-size:6px;">
+                        <tr>
+                            <td colspan="4" align="center"><strong>Jika ada pertanyaan mengenai slip gaji ini silahkan menghubungi HRD</strong></td>
+                         
+                        </tr>
+                        <tr>
+                            <td colspan="4" align="center">Slip Gaji ini di generate otomatis oleh sistem, tidak perlu tanda tangan basah</td>
+                          
+                        </tr>
+                    </table>
+                    ';
         $pdf->writeHTML($html, true, false, true, false, '');
         $pdf->SetFillColor(255, 255, 255);
         $pdf->writeHTMLCell(43, '', '', '', $left, 0, 0, 1, true, 'C', true);
